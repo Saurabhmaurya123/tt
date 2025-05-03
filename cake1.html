@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blow Out Candles - Birthday Celebration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #ffe6f0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: relative;
+    }
+    .cake {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+    .layer {
+      background: #ff99aa;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+    .layer-bottom {
+      width: 220px;
+      height: 100px;
+      background: #ff6f91;
+      border-radius: 10px;
+      margin-top: -10px;
+    }
+    .layer-middle {
+      width: 160px;
+      height: 80px;
+      background: #ff85a1;
+      margin-top: -10px;
+      border-radius: 8px;
+    }
+    .layer-top {
+      width: 100px;
+      height: 60px;
+      background: #ffa3b5;
+      margin-top: -10px;
+      border-radius: 6px;
+      position: relative;
+    }
+    .candle {
+      width: 8px;
+      height: 40px;
+      background: #ffff66;
+      border-radius: 3px;
+      position: absolute;
+      top: -45px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .flame {
+      width: 10px;
+      height: 15px;
+      background: orange;
+      border-radius: 50%;
+      margin-bottom: 2px;
+      animation: flicker 0.3s infinite alternate;
+    }
+    @keyframes flicker {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(1.2); opacity: 0.8; }
+    }
+    .candle:nth-child(1) { left: 10%; }
+    .candle:nth-child(2) { left: 30%; }
+    .candle:nth-child(3) { left: 50%; }
+    .candle:nth-child(4) { left: 70%; }
+    .candle:nth-child(5) { left: 90%; }
+
+    .balloon {
+      width: 30px;
+      height: 40px;
+      background: red;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 100px;
+      animation: rise 3s linear forwards;
+      z-index: 1;
+    }
+    .balloon::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 20px;
+      background: #555;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    @keyframes rise {
+      to {
+        transform: translateY(-500px) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    .card-message {
+      display: none;
+      background: rgba(255, 240, 245, 0.9);
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      font-family: 'Arial', sans-serif;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      color: #ff4081;
+      z-index: 20;
+      animation: popUp 1s ease forwards;
+      position: absolute;
+      top: 40%;
+      max-width: 90%;
+    }
+
+    .card-content {
+      margin-bottom: 15px;
+    }
+
+    .thank-you-btn {
+      background: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .thank-you-btn:hover {
+      background: #e91e63;
+    }
+
+    @keyframes popUp {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .confetti {
+      position: absolute;
+      top: 0;
+      width: 15px;
+      height: 15px;
+      background: pink;
+      transform: rotate(45deg);
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    canvas#fireworkCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Navigation buttons styling */
+    .nav-buttons {
+      position: absolute;
+      bottom: 20px;
+      display: flex;
+      gap: 20px;
+      z-index: 10;
+    }
+
+    .nav-btn {
+      background: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background: #e91e63;
+    }
+  </style>
+</head>
+<body>
+
+<div class="cake">
+  <div class="layer layer-top">
+    <div class="candle" onmouseover="extinguish(this)">
+      <div class="flame"></div>
+    </div>
+    <div class="candle" onmouseover="extinguish(this)">
+      <div class="flame"></div>
+    </div>
+    <div class="candle" onmouseover="extinguish(this)">
+      <div class="flame"></div>
+    </div>
+    <div class="candle" onmouseover="extinguish(this)">
+      <div class="flame"></div>
+    </div>
+    <div class="candle" onmouseover="extinguish(this)">
+      <div class="flame"></div>
+    </div>
+  </div>
+  <div class="layer layer-middle"></div>
+  <div class="layer layer-bottom"></div>
+</div>
+
+<div class="card-message" id="message">
+  <div class="card-content">
+    ✨ HAPPY BIRTHDAY! ✨<br>
+    Make a wish, Meri Jaan! May all your dreams come true! 🎂 ✨
+  </div>
+  <button class="thank-you-btn">Thank you! ❤️</button>
+</div>
+
+<div class="nav-buttons">
+  <button class="nav-btn" onclick="goToPreviousPage()">Previous Page</button>
+  <button class="nav-btn" onclick="goToNextPage()">Next Page</button>
+</div>
+
+<canvas id="fireworkCanvas"></canvas>
+
+<!-- Firework sound effect -->
+<audio id="fireworkSound" src="/storage/emulated/0/BIRTHDAY ITEM/fireworks-29629.mp3" preload="auto"></audio>
+
+<script>
+  let totalCandles = 5;
+  let blownCandles = 0;
+  let fireworkInterval = null; // To store the setInterval ID
+  let activeSounds = []; // To store all active sound elements
+
+  function extinguish(candle) {
+    const flame = candle.querySelector('.flame');
+    if (flame && flame.style.display !== 'none') {
+      flame.style.display = 'none';
+      blownCandles++;
+      popBalloons();
+      if (blownCandles === totalCandles) {
+        showMessage();
+        createConfetti();
+        startFireworks();
+      }
+    }
+  }
+
+  function showMessage() {
+    document.getElementById('message').style.display = 'block';
+  }
+
+  function popBalloons() {
+    const balloon = document.createElement('div');
+    balloon.classList.add('balloon');
+    balloon.style.left = Math.random() * 80 + '%';
+    balloon.style.backgroundColor = randomColor();
+    document.body.appendChild(balloon);
+  }
+
+  function randomColor() {
+    const colors = ['#ff4d4d', '#ff99cc', '#66ccff', '#99ff99', '#ffff66'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  function createConfetti() {
+    for (let i = 0; i < 100; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      confetti.style.background = randomColor();
+      document.body.appendChild(confetti);
+    }
+  }
+
+  // Fireworks
+  const canvas = document.getElementById('fireworkCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let particles = [];
+
+  function createFirework(x, y) {
+    const colors = ['#ff2d95', '#ffaa00', '#00c8ff', '#fff200', '#00ff66'];
+    for (let i = 0; i < 50; i++) {
+      particles.push({
+        x,
+        y,
+        radius: Math.random() * 2 + 1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        angle: Math.random() * 2 * Math.PI,
+        speed: Math.random() * 6 + 2,
+        alpha: 1
+      });
+    }
+  }
+
+  function animateFireworks() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles = particles.filter(p => p.alpha > 0);
+    particles.forEach(p => {
+      p.x += Math.cos(p.angle) * p.speed;
+      p.y += Math.sin(p.angle) * p.speed;
+      p.alpha -= 0.015;
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    });
+    requestAnimationFrame(animateFireworks);
+  }
+
+  function startFireworks() {
+    const fireworkAudio = document.getElementById('fireworkSound');
+    fireworkInterval = setInterval(() => {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height / 2;
+      createFirework(x, y);
+
+      // Clone and play sound for each firework
+      const soundClone = fireworkAudio.cloneNode();
+      soundClone.play();
+      activeSounds.push(soundClone); // Store the sound in the array
+    }, 500);
+    animateFireworks();
+  }
+
+  // Function to stop all firework sounds and clear the interval
+  function stopFireworks() {
+    if (fireworkInterval) {
+      clearInterval(fireworkInterval); // Stop the interval
+      fireworkInterval = null;
+    }
+    // Stop all active sounds
+    activeSounds.forEach(sound => {
+      sound.pause(); // Pause the sound
+      sound.currentTime = 0; // Reset the sound to the beginning
+    });
+    activeSounds = []; // Clear the array
+  }
+
+  // Stop fireworks when the page unloads
+  window.addEventListener('beforeunload', () => {
+    stopFireworks();
+  });
+
+  // Stop fireworks when clicking the "Thank you!" button
+  document.querySelector('.thank-you-btn').addEventListener('click', () => {
+    stopFireworks();
+  });
+
+  // Functions to navigate to previous and next pages
+  function goToPreviousPage() {
+    stopFireworks(); // Stop the firework sound
+    window.location.href = '/storage/emulated/0/BIRTHDAY ITEM/slider.html'; // Replace with your previous page URL
+  }
+
+  function goToNextPage() {
+    stopFireworks(); // Stop the firework sound
+    window.location.href = '/storage/emulated/0/BIRTHDAY ITEM/newsong.html'; // Replace with your next page URL
+  }
+</script>
+
+</body>
+</html>
